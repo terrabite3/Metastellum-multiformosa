@@ -1,13 +1,15 @@
+#!/usr/bin/env python3
+
+
 import math
 import cairo
 import subprocess
 import os.path
-import threading
 from numpy import arange
-from multiprocessing.dummy import Pool
-from functools import partial
-import itertools
 import colorsys
+import argparse
+import time
+
 
 def circle_point(theta):
     x = math.sin(2 * math.pi * theta) / 2
@@ -22,22 +24,18 @@ def setColorHsv(ctx, h, s, v):
     r, g, b = colorsys.hsv_to_rgb(h, s, v)
     ctx.set_source_rgb(r, g, b)
 
-count_lock = threading.Lock()
-count = 0
 
 def blah(product, modulo=1000, width=1080, height=1080, thinness=5000, decimal_digits=1, verbose=False, overwrite=False):
+    product = float(product)
+    modulo = int(modulo)
+    width = int(width)
+    height = int(height)
+    thinness = int(thinness)
+    decimal_digits = int(decimal_digits)
+    verbose = bool(verbose)
+    overwrite = bool(overwrite)
 
-    global count
-    global count_lock
-    global total_frames
-    with count_lock:
-        count += 1
-        value = count
-    if (value * 100) % total_frames == 0:
-        message = str(value * 100 // total_frames) + '%'
-        print(message, end='')
-
-    filename = make_name(product, prefix='frames/chord', decimal_digits=decimal_digits)
+    filename = make_name(product, prefix='frames/chord', decimal_digits=decimal_digits, total_digits=decimal_digits + 3)
 
     if os.path.isfile(filename) and not overwrite:
         if verbose:
@@ -85,9 +83,14 @@ def blah(product, modulo=1000, width=1080, height=1080, thinness=5000, decimal_d
 
 
     if verbose:
-        print(filename + ' done')
+        print('writing ' + filename, end='')
 
     surface.write_to_png (filename) # Output to PNG
+    
+    if verbose:
+        print(' done')
+
+    return filename
 
 
 def make_name(number, prefix='chord', suffix='.png', decimal_digits=0, total_digits=5):
@@ -100,24 +103,56 @@ def make_name(number, prefix='chord', suffix='.png', decimal_digits=0, total_dig
     return prefix + name + suffix
 
 
+parser = argparse.ArgumentParser(description='Draw a frame of Metastellum multiformosa')
+
+parser.add_argument('-s', '--size', dest='size', action='store', default=1080, help='width and height of image')
+parser.add_argument('-v', '--verbose', action='store_true')
+args = parser.parse_args()
+
+size = args.size
+verbose = args.verbose
+
 
 
 # Do the thing
-modulo = 1000
-start_product = 22
-end_product = 23
-step_product = 0.001 #0
-digits = 3
+num_lines = 2000 
 
-products = arange(start_product, end_product, step_product)
-total_frames = len(products)
+if __name__ == '__main__':
+    epoch = time.time()
 
-work_function = partial(blah, decimal_digits=digits)
+    try:
+        with open('epoch.txt', 'r') as epoch_file:
+            epoch = float(epoch_file.readline())
+    except:
+        with open('epoch.txt', 'w') as epoch_file:
+            epoch = time.time()
+            epoch_file.write(str(epoch) + '\n')
 
 
-test = True
-if test:
-    blah(3, modulo=1000, thinness=5000, verbose=True, overwrite=True)
 
-    exit()
+    # The number of seconds to take to advance by "1"
+    unit_time = 60 * 60 * 24
+#    unit_time = 60
+
+    while True:
+
+
+        current_time = time.time()
+        delta_time = current_time - epoch
+
+        
+
+        frame_num = delta_time / unit_time + 1
+        if verbose:
+            print(frame_num)
+
+        filename = blah(frame_num, modulo=num_lines, width=size, height=size, thinness=5000, decimal_digits=5, verbose=verbose, overwrite=True)
+        if verbose:
+            print(filename)
+
+        #subprocess.run(['ln', '-s', '-f', filename, 'd.png'])
+        subprocess.run(['ln', '-s', '-f', filename, 'link1.png'])
+        subprocess.run(['ln', '-s', '-f', filename, 'link2.png'])
+        subprocess.run(['ln', '-s', '-f', filename, 'link3.png'])
+
 
