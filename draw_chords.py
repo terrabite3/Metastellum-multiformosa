@@ -99,13 +99,6 @@ def make_name(number, prefix='chord', suffix='.png', decimal_digits=0, total_dig
 
     return prefix + name + suffix
 
-    # if decimal_digits == 0:
-    #     name = str(number)
-    # else:
-    #     f = '%.' + str(decimal_digits) + 'f'
-    #     name = f % number
-    #     name = name.replace('.', '')
-    # return prefix + name + suffix
 
 
 
@@ -128,25 +121,3 @@ if test:
 
     exit()
 
-multithread = True
-if multithread:
-    pool = Pool(6)
-    pool.map(work_function, products)
-else:
-    for p in products:
-        work_function(p)
-
-
-make_video = False
-if make_video:
-    print('Making video')
-    # os.system(r'C:\cygwin64\bin\bash.exe --login -c "make_video.sh')
-    command = r'C:\ffmpeg\bin\ffmpeg.exe -y -framerate 60 -i "frames/chord%0' + str(digits + 2) + 'd.png" -c:v libx264rgb -preset slow -crf 18 -c:a copy output.mkv'
-
-    p = subprocess.Popen(command, stderr=subprocess.PIPE)
-
-    while p.poll() is None:
-        print(p.stderr.readline())
-    print(p.stderr.read())
-
-print('All done')
