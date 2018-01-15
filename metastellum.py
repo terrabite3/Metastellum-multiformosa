@@ -105,12 +105,22 @@ def make_name(number, prefix='chord', suffix='.png', decimal_digits=0, total_dig
 
 parser = argparse.ArgumentParser(description='Draw a frame of Metastellum multiformosa')
 
-parser.add_argument('-s', '--size', dest='size', action='store', default=1080, help='width and height of image')
+parser.add_argument('-s', '--size', dest='size', action='store', default=0, help='width and height of image')
 parser.add_argument('-v', '--verbose', action='store_true')
 args = parser.parse_args()
 
-size = args.size
 verbose = args.verbose
+
+size = args.size
+if size == 0:
+    with open('/sys/class/graphics/fb0/virtual_size', 'r') as fb_size:
+        sizes = fb_size.readline().split(',')
+        size = min(int(sizes[0]), int(sizes[1]))
+        if verbose: 
+            print('Detected size ' + str(size))
+        # Double the size for anti-aliasing
+        size *= 2
+
 
 
 
@@ -150,9 +160,15 @@ if __name__ == '__main__':
         if verbose:
             print(filename)
 
-        #subprocess.run(['ln', '-s', '-f', filename, 'd.png'])
         subprocess.run(['ln', '-s', '-f', filename, 'link1.png'])
         subprocess.run(['ln', '-s', '-f', filename, 'link2.png'])
         subprocess.run(['ln', '-s', '-f', filename, 'link3.png'])
 
-
+        # Check if the image viewer is running
+        ps = subprocess.Popen('ps -e | grep fbi', shell=True, stdout=subprocess.PIPE)
+        output = ps.stdout.read()
+        ps.stdout.close()
+        ps.wait()
+        if len(output) == 0:
+            print('fbi is not running; exiting')
+            break
