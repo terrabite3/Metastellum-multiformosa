@@ -83,11 +83,11 @@ def blah(product, modulo=1000, width=1080, height=1080, thinness=5000, decimal_d
     ctx.set_line_width(0.002)
     ctx.stroke()
 
-    surface.write_to_png (filename) # Output to PNG
 
     if verbose:
         print(filename + ' done')
 
+    surface.write_to_png (filename) # Output to PNG
 
 
 def make_name(number, prefix='chord', suffix='.png', decimal_digits=0, total_digits=5):
@@ -115,7 +115,7 @@ total_frames = len(products)
 work_function = partial(blah, decimal_digits=digits)
 
 
-test = False
+test = True
 if test:
     blah(3, modulo=1000, thinness=5000, verbose=True, overwrite=True)
 
