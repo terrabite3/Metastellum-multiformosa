@@ -58,6 +58,13 @@ def blah(product, modulo=1000, width=1080, height=1080, thinness=5000, decimal_d
 
     ctx.set_line_width (1 / thinness)
 
+    # Blend colors
+    ctx.set_operator(cairo.OPERATOR_ADD)
+
+    # Set antialians to BEST (the enum is missing from pycairo)
+    # I can't tell if this has an effect
+    ctx.set_antialias(6)
+
 
     ################################################
     # Loop here
@@ -73,6 +80,10 @@ def blah(product, modulo=1000, width=1080, height=1080, thinness=5000, decimal_d
 
 
 
+    # The white circle should cover the lines for a clean edge
+    ctx.set_operator(cairo.OPERATOR_OVER)
+
+    # Draw the circle
     ctx.set_source_rgb (1, 1, 1) # Solid color
     ctx.stroke ()
 
