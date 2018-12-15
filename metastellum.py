@@ -9,7 +9,7 @@ from numpy import arange
 import colorsys
 import argparse
 import time
-
+import glob
 
 def circle_point(theta):
     x = math.sin(2 * math.pi * theta) / 2
@@ -155,6 +155,8 @@ if __name__ == '__main__':
     unit_time = 60 * 60 * 24
 #    unit_time = 60
 
+    strikes = 0
+
     while True:
 
 
@@ -175,11 +177,18 @@ if __name__ == '__main__':
         subprocess.run(['ln', '-s', '-f', filename, 'link2.png'])
         subprocess.run(['ln', '-s', '-f', filename, 'link3.png'])
 
+        for old_file in glob.glob('frames/chord*.png'):
+            if old_file != filename:
+                os.remove(old_file)
+
         # Check if the image viewer is running
         ps = subprocess.Popen('ps -e | grep fbi', shell=True, stdout=subprocess.PIPE)
         output = ps.stdout.read()
         ps.stdout.close()
         ps.wait()
         if len(output) == 0:
-            print('fbi is not running; exiting')
-            break
+            strikes += 1
+            if strikes >= 3:
+                print('fbi is not running; exiting')
+                break
+#            os.system('fbi -d /dev/fb0 link1.png link2.png link3.png &')
