@@ -36,3 +36,10 @@ fi
 Reboot the pi. The first time the plant starts, it will record the date and time. The animation is always performed in reference to that epoch. If it loses power, it will resume where it would have been otherwise.
 
 There are probably more steps required.
+
+1. Install fbi
+2. Install python3 and python3-pip, python3-cairo
+3. ln -s /mnt/ramdisk/ frames
+4. Enable automatic login with raspi-config
+5. sudo pip install numpy
+
