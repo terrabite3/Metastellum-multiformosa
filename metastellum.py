@@ -113,6 +113,7 @@ def get_epoch(filename):
         with open(filename, 'w') as epoch_file:
             epoch = time.time()
             epoch_file.write(str(epoch) + '\n')
+    return epoch
 
 
 
@@ -190,7 +191,7 @@ if __name__ == '__main__':
         ps.wait()
         if len(output) == 0:
             strikes_left -= 1
-            if strikes == 0:
+            if strikes_left == 0:
                 print('fbi is not running; exiting')
                 break
         else:

@@ -6,6 +6,7 @@ cd $DIR
 if ps -e | grep -P "(python3|fbi)" ; then
     echo "Metastellum is already running"
     exit 1
+fi
 
 ./metastellum.py &
 
@@ -20,3 +21,4 @@ done
 
 # Start the image viewer
 fbi link*.png
+
