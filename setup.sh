@@ -9,8 +9,7 @@ cd $DIR
 
 
 apt-get update
-apt-get install fbi python3 python3-pip python3-cairo
-sudo pip install numpy
+apt-get install fbi python3 python3-pip python3-cairo python3-numpy
 
 echo "tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=32M 0 0" >> /etc/fstab
 
