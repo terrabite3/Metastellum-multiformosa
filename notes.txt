@@ -1,0 +1,4 @@
+python metastellum.py -t 0 -e 30 -n 54000
+cd frames
+for F in *.png ; do echo "file '$F'" ; done > file_list.txt
+ffmpeg -r 30 -f concat -i file_list.txt -i Through\ the\ Fire\ and\ Flames\ slow.mp3 -c:a copy -s 1080x1080 -c:v libx265 -crf 10 output30_x265_crf10_full.mp4
